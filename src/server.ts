@@ -1,20 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
-import usersRouter from "./routes/user.route";
 import dbConnect from "./configs/mongoDb";
 import cloudinaryConnect from "./configs/cloudinary";
 import userRouter from "./routes/user.route";
+import productRouter from "./routes/product.route";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// middleware 
+// middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.use("/api/user", userRouter);
+
+app.use("/api/product", productRouter);
 
 try {
   cloudinaryConnect();
@@ -24,11 +27,11 @@ try {
 }
 
 dbConnect()
-.then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log("Connection failed", error);
   });
-})
-.catch((error: Error) => {
-  console.log("Connection failed", error);
-});
